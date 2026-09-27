@@ -1,0 +1,16 @@
+target/**
+
+
+### IntelliJ IDEA ###
+.idea/**
+*.iws
+*.iml
+*.ipr
+
+### Mac OS ###
+.DS_Store
+
+/api/target/**
+/core/target/**
+/examples/cntv1/target/**
+/examples/cntv2/target/**
