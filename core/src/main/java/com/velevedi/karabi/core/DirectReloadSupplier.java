@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class DirectInstanceSupplier<T extends Container> implements InstanceSupplier<T> {
+public class DirectReloadSupplier<T extends Container> implements InstanceSupplier<T> {
 
     private final Class<T> type;
     private final CopyOnWriteArraySet<Listener<T>> listeners = new CopyOnWriteArraySet<>();
 
-    public DirectInstanceSupplier(Class<T> type) {
+    public DirectReloadSupplier(Class<T> type) {
         this.type = type;
     }
 
