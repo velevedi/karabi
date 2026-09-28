@@ -5,6 +5,7 @@ import com.velevedi.karabi.core.Snapshot;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,6 +14,7 @@ public class Manager<T extends Container> implements AutoCloseable {
 
     private final Class<T> type;
     private final AtomicReference<Snapshot<T>> current = new AtomicReference<>();
+    private final AtomicBoolean flipped = new AtomicBoolean(false);
     private final T proxy;
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -25,6 +27,7 @@ public class Manager<T extends Container> implements AutoCloseable {
             lock.lock();
             try {
                 Snapshot<T> oldHolder = current.getAndSet(newSnapshot);
+                flipped.set(true);
                 if (oldHolder != null) {
                     unload(oldHolder);
                 }
@@ -36,6 +39,12 @@ public class Manager<T extends Container> implements AutoCloseable {
 
     public T current() {
         return proxy;
+    }
+
+    /// Indicator if a value has been reloaded. Once requested the state flips back to default.
+    /// This method is useful indicator to reinitialize the object if required.
+    public boolean flipped() {
+        return flipped.compareAndSet(true,  false);
     }
 
     @Override
