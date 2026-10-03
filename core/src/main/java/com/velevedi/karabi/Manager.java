@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /// One manager per container.
-public class Manager<T extends Container> implements AutoCloseable {
+public class Manager<T extends AutoCloseable> implements AutoCloseable {
 
     private final Class<T> type;
     private final AtomicReference<Snapshot<T>> current = new AtomicReference<>();
@@ -38,7 +38,7 @@ public class Manager<T extends Container> implements AutoCloseable {
     }
 
     public T current() {
-        return proxy;
+        return type.cast(proxy);
     }
 
     /// Indicator if a value has been reloaded. Once requested the state flips back to default.

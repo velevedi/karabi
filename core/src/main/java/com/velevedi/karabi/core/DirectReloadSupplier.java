@@ -1,6 +1,5 @@
 package com.velevedi.karabi.core;
 
-import com.velevedi.karabi.Container;
 import com.velevedi.karabi.Manager;
 
 import java.net.URL;
@@ -8,7 +7,7 @@ import java.util.Arrays;
 import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class DirectReloadSupplier<T extends Container> implements InstanceSupplier<T> {
+public class DirectReloadSupplier<T extends AutoCloseable> implements InstanceSupplier<T> {
 
     private final Class<T> type;
     private final CopyOnWriteArraySet<Listener<T>> listeners = new CopyOnWriteArraySet<>();
@@ -33,7 +32,7 @@ public class DirectReloadSupplier<T extends Container> implements InstanceSuppli
                         "No implementations found for [" + type.getSimpleName() + "] in [" + Arrays.toString(urls) + "]"
                 );
             }
-            for  (Listener<T> listener : listeners) {
+            for (Listener<T> listener : listeners) {
                 listener.onChange(new Snapshot<>(instance, classLoader));
             }
         } catch (Throwable t) {

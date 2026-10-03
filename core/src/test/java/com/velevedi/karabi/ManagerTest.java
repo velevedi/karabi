@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 class ManagerTest {
 
     @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
     void reload() {
 
         URL url1 = this.getClass().getClassLoader().getResource("lib/cntv1-1.0-SNAPSHOT.jar");
@@ -22,7 +21,7 @@ class ManagerTest {
 
         DirectReloadSupplier<Container> reloader = new DirectReloadSupplier<>(Container.class);
 
-        try (Manager manager = new Manager(Container.class, reloader)) {
+        try (Manager<Container> manager = new Manager<>(Container.class, reloader)) {
 
             for (int i = 0; i < 1000; i++) {
 
@@ -48,14 +47,14 @@ class ManagerTest {
         URL url1 = this.getClass().getClassLoader().getResource("lib/cntv1-1.0-SNAPSHOT.jar");
         URL url2 = this.getClass().getClassLoader().getResource("lib/cntv2-1.0-SNAPSHOT.jar");
 
-        DirectReloadSupplier<Container> reloader = new DirectReloadSupplier<>(Container.class);
+        DirectReloadSupplier<Container> supplier = new DirectReloadSupplier<>(Container.class);
 
-        try (Manager manager = new Manager(Container.class, reloader)) {
+        try (Manager<Container> manager = new Manager<>(Container.class, supplier)) {
 
             assertThat(manager.flipped(), is(false));
 
 
-            reloader.reload(new URL[]{url1});
+            supplier.reload(new URL[]{url1});
 
             assertThat(manager.current().id(), is("ContainerVersion1"));
 
@@ -64,7 +63,7 @@ class ManagerTest {
             assertThat(manager.flipped(), is(false));
 
 
-            reloader.reload(new URL[]{url2});
+            supplier.reload(new URL[]{url2});
 
             assertThat(manager.current().id(), is("ContainerVersion2"));
 
@@ -72,6 +71,6 @@ class ManagerTest {
             // second call will be negative
             assertThat(manager.flipped(), is(false));
         }
-
     }
+
 }
